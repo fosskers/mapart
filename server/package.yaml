@@ -9,12 +9,23 @@ maintainer:          colingw@gmail.com
 copyright:           2017 ???
 category:            Web
 
+ghc-options:
+  - -fwarn-unused-imports
+  - -fwarn-unused-binds
+  - -fwarn-name-shadowing
+  - -fwarn-unused-matches
+  - -fwarn-incomplete-patterns
+
 dependencies:
   - base >= 4.7 && < 5
+  - bytestring
+  - JuicyPixels >= 3.2 && < 3.3
   - mapalgebra < 1.0
   - servant >= 0.9 && < 0.12
   - servant-server >= 0.9 && < 0.12
   - servant-JuicyPixels >= 0.3 && < 0.4
+  - unix
+  - warp >= 3.2 && < 3.3
 
 executables:
   server:
