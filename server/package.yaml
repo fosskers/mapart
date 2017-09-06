@@ -1,0 +1,20 @@
+name:                server
+version:             0.1.0.0
+synopsis:            Create artwork from satellite imagery.
+description:         Create artwork from satellite imagery.
+homepage:            https://github.com/fosskers/mapart
+license:             BSD3
+author:              Ross Bernet, Colin Woodbury, Nathan Zimmerman
+maintainer:          colingw@gmail.com
+copyright:           2017 ???
+category:            Web
+
+dependencies:
+  - base >= 4.7 && < 5
+  - servant >= 0.9 && < 0.12
+  - servant-server >= 0.9 && < 0.12
+  - servant-JuicyPixels >= 0.3 && < 0.4
+
+executables:
+  server:
+    main: Server.hs
