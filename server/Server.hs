@@ -5,13 +5,12 @@
 import           Codec.Picture
 import           Control.Concurrent (myThreadId)
 import qualified Control.Exception as E
-import           Data.Aeson
 import qualified Data.ByteString as BS
 import           Data.List.NonEmpty (NonEmpty(..))
 import qualified Data.Map.Lazy as M
 import           Data.Proxy
+import           Data.Text (Text)
 import           Data.Word
-import           GHC.Generics
 import           Geography.MapAlgebra
 import           Lucid
 import qualified Network.Wai.Handler.Warp as W
@@ -25,32 +24,28 @@ import           System.Posix.Signals hiding (Handler)
 
 ---
 
-data Colour = GreenRed | Spectrum | BlueGreen | PurpleYellow | BrownBlue
-            deriving (Eq, Ord, Show, Generic, FromJSON)
-
-type API = "colour" :> ReqBody '[JSON] Colour :> Post '[PNG] (Image PixelRGBA8)
+type API = "colour" :> Capture "colour" Text :> Get '[PNG] (Image PixelRGBA8)
   :<|> "assets" :> Raw
   :<|> Get '[HTML] (Html ())
-
-api :: Proxy API
-api = Proxy
 
 server :: Raster p 512 512 Word8 -> Server API
 server r = pure . render r :<|> serveDirectoryFileServer "assets" :<|> pure page
 
-render :: Raster p 512 512 Word8 -> Colour -> Image PixelRGBA8
+render :: Raster p 512 512 Word8 -> Text -> Image PixelRGBA8
 render r c = rgba $ classify invisible (colourMap c) r
 
-colourMap :: Colour -> M.Map Word8 PixelRGBA8
+colourMap :: Text -> M.Map Word8 PixelRGBA8
 colourMap c = (maybe greenRed id $ M.lookup c ramps) [1, 25, 50, 75, 100, 125, 150, 175, 200, 225]
-  where ramps = M.fromList [ (GreenRed, greenRed), (Spectrum, spectrum), (BlueGreen, blueGreen)
-                           , (PurpleYellow, purpleYellow), (BrownBlue, brownBlue) ]
+  where ramps = M.fromList [ ("greenred", greenRed), ("spectrum", spectrum), ("bluegreen", blueGreen)
+                           , ("purpleyellow", purpleYellow), ("brownblue", brownBlue) ]
 
 page :: Html ()
-page = html_ $ head_ (title_ "Map Art") >> body_ (script_ [src_ "assets/art.js"] "")
+page = html_ $ head_ h >> body_ b
+  where h = title_ "Map Art"
+        b = script_ [src_ "assets/art.js"] "" >> script_ [type_ "text/javascript"] "Elm.Art.fullscreen()"
 
 app :: Raster p 512 512 Word8 -> Application
-app = serve api . server
+app = serve (Proxy :: Proxy API) . server
 
 main :: IO ()
 main = do
