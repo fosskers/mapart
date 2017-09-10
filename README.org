@@ -1,0 +1,25 @@
+* Map Art
+
+A proof-of-concept website and server to test whether:
+
+- [[https://github.com/fosskers/mapalgebra][My ~mapalgebra~ library]] works and is at all performant
+- Haskell and its [[https://haskell-servant.readthedocs.io/en/stable/][Servant]] library are any good for writing tile servers
+- [[http://elm-lang.org/][Elm]] is productive for writing real webapps
+- The above tools would be sufficient for writing a production-grade webapp for generating Map Art
+
+** Dependencies
+
+- Haskell's [[https://docs.haskellstack.org/en/stable/README/][stack]] tool
+- Elm's [[https://guide.elm-lang.org/install.html][suite of tools]]
+- ~make~
+
+** Running Locally
+
+| Command      | Result                                          |
+|--------------+-------------------------------------------------|
+| ~make build~ | Compile both the front and backends             |
+| ~make elm~   | Rebuild only the Elm frontend (produces JS)     |
+| ~make go~    | Rebuild everything and start the backend server |
+
+If the backend server starts successfully, you should see ~Listening for requests...~
+printed to stdout. You can then access the site on [[http://localhost:8081][port 8081]].

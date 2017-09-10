@@ -58,7 +58,6 @@ view : State -> Html Event
 view state =
     div []
         [ navbar state
-        -- [ Grid.container [] [ navbar state ]
         , Grid.container [ style [ ("padding-top", "5%") ] ]
             [ Grid.row [ Row.centerXs ]
                   [ Grid.col [ Col.xsAuto ]

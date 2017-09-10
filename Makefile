@@ -12,6 +12,3 @@ start:
 	cd server/ && $(STACK) exec -- server  #--port $(PORT)
 
 go: build start
-
-clean:
-	rm -f server/aafa.db
