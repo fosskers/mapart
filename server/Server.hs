@@ -41,8 +41,15 @@ colourMap c = (maybe greenRed id $ M.lookup c ramps) [1, 25, 50, 75, 100, 125, 1
 
 page :: Html ()
 page = html_ $ head_ h >> body_ b
-  where h = title_ "Map Art"
-        b = script_ [src_ "assets/art.js"] "" >> script_ [type_ "text/javascript"] "Elm.Art.fullscreen()"
+  where b = script_ [src_ "assets/art.js"] "" >> script_ [type_ "text/javascript"] "Elm.Art.fullscreen()"
+        h = do
+          title_ "Map Art"
+          meta_ [charset_ "utf-8"]
+          meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1, shrink-to-fit=no"]
+          link_ [ rel_ "stylesheet"
+                , href_ "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+                , integrity_ "sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+                , crossorigin_ "anonymous" ]
 
 app :: Raster p 512 512 Word8 -> Application
 app = serve (Proxy :: Proxy API) . server
