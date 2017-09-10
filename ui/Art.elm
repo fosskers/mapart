@@ -31,8 +31,10 @@ update event state =
         Nav nbs -> ({ state | navbar = nbs }, Cmd.none)
 
 -- | Generate a clickable button based on a `Colour`.
-toButton : Colour -> Html Event
-toButton c = Button.button [Button.primary, Button.block, Button.attrs [onClick <| Choice c]] [text <| toString c]
+toButton : State -> Colour -> Html Event
+toButton state c =
+    let b = if state.colour == c then Button.outlineSuccess else Button.outlineSecondary
+    in Button.button [b, Button.block, Button.attrs [onClick <| Choice c]] [text <| toString c]
 
 -- | The appearance and behaviour of the top-bar.
 navbar : State -> Html Event
@@ -61,8 +63,8 @@ view state =
             [ Grid.row [ Row.centerXs ]
                   [ Grid.col [ Col.xsAuto ]
                         [ img [src <| "colour/" ++ String.toLower (toString state.colour)] [] ]]
-            , Grid.row [ Row.centerXs ]
-                <| List.map (\c -> Grid.col [ Col.xs2 ] [ toButton c ])
+            , Grid.row [ Row.centerXs, Row.attrs [ style [("padding-top", "3%")]] ]
+                <| List.map (\c -> Grid.col [ Col.xs2 ] [ toButton state c ])
                     [GreenRed, Spectrum, BlueGreen, PurpleYellow, BrownBlue]
             ]
         ]
