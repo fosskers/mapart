@@ -40,7 +40,11 @@ navbar state = Navbar.config Nav
              |> Navbar.withAnimation
              |> Navbar.info
              |> Navbar.fixTop
-             |> Navbar.brand [ href "#" ] [ text "Map Art" ]
+             |> Navbar.brand [ href "#" ]
+                [ img [ src "assets/azavea-logo.png"
+                      , class "d-inline-block align-top"
+                      , style [ ("width", "30px") ] ] []
+                , text " Map Art" ]
              |> Navbar.items
                 [ Navbar.itemLink [href "#"] [ text "About" ]
                 , Navbar.itemLink [href "#"] [ text "Purchasing" ]]
@@ -51,12 +55,14 @@ navbar state = Navbar.config Nav
 view : State -> Html Event
 view state =
     div []
-        [ Grid.container [] [ navbar state ]
+        [ navbar state
+        -- [ Grid.container [] [ navbar state ]
         , Grid.container [ style [ ("padding-top", "5%") ] ]
             [ Grid.row [ Row.centerXs ]
-                  [ Grid.col [ Col.xs10 ]
+                  [ Grid.col [ Col.xsAuto ]
                         [ img [src <| "colour/" ++ String.toLower (toString state.colour)] [] ]]
             , Grid.row [ Row.centerXs ]
-                <| List.map (\c -> Grid.col [ Col.xs2 ] [ toButton c ]) [GreenRed, Spectrum, BlueGreen, PurpleYellow, BrownBlue]
+                <| List.map (\c -> Grid.col [ Col.xs2 ] [ toButton c ])
+                    [GreenRed, Spectrum, BlueGreen, PurpleYellow, BrownBlue]
             ]
         ]
