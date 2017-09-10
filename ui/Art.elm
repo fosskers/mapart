@@ -1,5 +1,11 @@
 module Art exposing (..)
 
+import Bootstrap.Button as Button
+import Bootstrap.Form.Input as Input
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
+import Bootstrap.Navbar as Navbar
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -8,28 +14,49 @@ import Html.Events exposing (..)
 
 type Colour = GreenRed | Spectrum | BlueGreen | PurpleYellow | BrownBlue
 
-type Event = Choice Colour
+type Event = Choice Colour | Nav Navbar.State
 
-type alias State = { colour : Colour }
+type alias State = { colour : Colour
+                   , navbar : Navbar.State }
 
-main = Html.program { init = (State GreenRed, Cmd.none)
+main = Html.program { init = let (nbs, cmd) = Navbar.initialState Nav in (State GreenRed nbs, cmd)
                     , view = view
                     , update = update
-                    , subscriptions = \_ -> Sub.none
-                    }
+                    , subscriptions = \s -> Navbar.subscriptions s.navbar Nav }
 
 update : Event -> State -> (State, Cmd Event)
-update event _ =
+update event state =
     case event of
-        Choice c -> (State c, Cmd.none)
+        Choice c -> ({ state | colour = c }, Cmd.none)
+        Nav nbs -> ({ state | navbar = nbs }, Cmd.none)
 
 -- | Generate a clickable button based on a `Colour`.
 toButton : Colour -> Html Event
-toButton c = button [onClick <| Choice c] [text <| toString c]
+toButton c = Button.button [Button.primary, Button.block, Button.attrs [onClick <| Choice c]] [text <| toString c]
+
+-- | The appearance and behaviour of the top-bar.
+navbar : State -> Html Event
+navbar state = Navbar.config Nav
+             |> Navbar.withAnimation
+             |> Navbar.info
+             |> Navbar.fixTop
+             |> Navbar.brand [ href "#" ] [ text "Map Art" ]
+             |> Navbar.items
+                [ Navbar.itemLink [href "#"] [ text "About" ]
+                , Navbar.itemLink [href "#"] [ text "Purchasing" ]]
+             -- |> Navbar.customItems
+             --    [ Navbar.formItem [] [Input.text [ Input.placeholder "Filter by location..." ]]]
+             |> Navbar.view state.navbar
 
 view : State -> Html Event
-view s =
+view state =
     div []
-        [ img [src <| "colour/" ++ String.toLower (toString s.colour)] []
-        , div [] <| List.map toButton [GreenRed, Spectrum, BlueGreen, PurpleYellow, BrownBlue]
+        [ Grid.container [] [ navbar state ]
+        , Grid.container [ style [ ("padding-top", "5%") ] ]
+            [ Grid.row [ Row.centerXs ]
+                  [ Grid.col [ Col.xs10 ]
+                        [ img [src <| "colour/" ++ String.toLower (toString state.colour)] [] ]]
+            , Grid.row [ Row.centerXs ]
+                <| List.map (\c -> Grid.col [ Col.xs2 ] [ toButton c ]) [GreenRed, Spectrum, BlueGreen, PurpleYellow, BrownBlue]
+            ]
         ]
